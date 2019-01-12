@@ -55,11 +55,18 @@
 		#define RELAY3      (1 << 5)
 		#define RELAY4      (1 << 4)
 		#define ALL_RELAYS  (RELAY1 | RELAY2 | RELAY3 | RELAY4)
+    #define BAUDRATE 9600
+    #define DOUBLESPEED 0
+    #define JOYSTICK_MASK 0x04
+    #define BUTTONS_MASK 0x78
+    #define LED13_MASK 0x80
+    #define OTHER_LEDS_MASK 0x7F
 
 	/* Function Prototypes: */
 		void SetupHardware(void);
-
+    void task_button_led();
 		void EVENT_USB_Device_ControlRequest(void);
-
+    void ReceiveNextReport();
+    void SendNextReport();
 #endif
 

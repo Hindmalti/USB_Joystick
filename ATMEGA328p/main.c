@@ -5,11 +5,7 @@
 // For the serial port
 
 #define CPU_FREQ        16000000L       // Assume a CPU frequency of 16Mhz
-int globale;
-/*
-<
->
-*/
+
 void init_serial(int speed)
 {
 	/* Set baud rate */
@@ -57,8 +53,8 @@ void output_init(void) {
 
 void input_init(void)
 { 
-	DDRD &= 0x78; // PIN 3, 4, 5, 6 as input
-	PORTD|= 0x78; // pull-up activé
+	DDRD &= 0xFC; // PIN 2, 3, 4, 5, 6 , 7 as input
+	PORTD|= 0xFC; // pull-up activé
 }
 
 void interrupt_init() 
@@ -70,39 +66,36 @@ void interrupt_init()
 
 //Fonction  
 void light_led(unsigned char value){
-	if(value == 1)
-	{
-	    PORTB = 0xff;
-	}
-	else 
-	{
-		PORTB = 0x00;
-	}
+	PORTB = (value & 0x7F); // On récupère X-------- 
+	PORTD = (value & 0x80); // On récupère -XXXXXXXX
 }
 
-void toggle_led(void) {
+/* void toggle_led(void) {
 	PORTB ^= 0xff;
 	_delay_ms(100);
-}
+} */
+
 //Interruption qui permet d'envoyer en série la valeur du PIND
 ISR(PCINT2_vect)
 {
-	send_serial('a');
+	//send_serial('a');
 	send_serial(PIND);
-	toggle_led();	
+	//toggle_led();	
 }
+
 //Interruption qui en recevant sur le port série allume les leds
 ISR(USART_RX_vect)
 {
 	uint8_t tmp = UDR0;
-	if(tmp == 'a')
+	light_led(tmp);
+	/* if(tmp == 'a')
 	{
 		light_led(1);
 	}
 	if(tmp == 'b')
 	{
 		light_led(0);
-	}
+	} */
 } 
 
 // Dummy main
