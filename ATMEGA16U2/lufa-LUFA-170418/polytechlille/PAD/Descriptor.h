@@ -7,8 +7,8 @@
 */
 
 /*
-  Copyright 2010  OBinou (obconseil [at] gmail [dot] com)
   Copyright 2017  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2010  Denver Gingerich (denver [at] ossguy [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -38,8 +38,9 @@
 #define _DESCRIPTORS_H_
 
 	/* Includes: */
-		#include <avr/pgmspace.h>
 		#include <LUFA/Drivers/USB/USB.h>
+
+		#include <avr/pgmspace.h>
 
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the
@@ -50,8 +51,14 @@
 		{
 			USB_Descriptor_Configuration_Header_t Config;
 
-			// Relay Board Interface
-			USB_Descriptor_Interface_t            RelayBoardInterface;
+			// BUTTON Interface
+			USB_Descriptor_Interface_t            BUTTON_Interface;
+			USB_Descriptor_Endpoint_t             PAD_ReportINEndpoint1;
+			USB_Descriptor_Endpoint_t             PAD_ReportINEndpoint2;
+
+			USB_Descriptor_Interface_t            LED_Interface;
+			USB_Descriptor_Endpoint_t             PAD_ReportOUTndpoint1;
+			USB_Descriptor_Endpoint_t             PAD_ReportOUTEndpoint2;
 		} USB_Descriptor_Configuration_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
@@ -60,7 +67,9 @@
 		 */
 		enum InterfaceDescriptors_t
 		{
-			INTERFACE_ID_RelayBoard = 0, /**< Relay board interface descriptor ID */
+			INTERFACE_ID_BUTTON = 1, /**<  BUTTON interface descriptor ID */
+			INTERFACE_ID_LED = 2, /**< LEDS interface descriptor ID */
+			
 		};
 
 		/** Enum for the device string descriptor IDs within the device. Each string descriptor should
@@ -72,13 +81,24 @@
 			STRING_ID_Language     = 0, /**< Supported Languages string descriptor ID (must be zero) */
 			STRING_ID_Manufacturer = 1, /**< Manufacturer string ID */
 			STRING_ID_Product      = 2, /**< Product string ID */
-			STRING_ID_Serial       = 3, /**< Serial number string ID */
+			
 		};
+
+	/* Macros: */
+		/** Endpoint address of the PAD HID reporting IN endpoint. */
+		#define PAD_IN_EPADDR        (ENDPOINT_DIR_IN  | 1)
+
+		/** Endpoint address of the PAD HID reporting OUT endpoint. */
+		#define PAD_OUT_EPADDR       (ENDPOINT_DIR_OUT | 2)
+
+		/** Size in bytes of the PAD HID reporting IN and OUT endpoints. */
+		#define PAD_EPSIZE           8
 
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 		                                    const uint16_t wIndex,
 		                                    const void** const DescriptorAddress)
 		                                    ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
+
 #endif
 

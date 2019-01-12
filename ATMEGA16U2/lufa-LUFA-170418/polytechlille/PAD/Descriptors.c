@@ -77,7 +77,7 @@ const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor 
 			.Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
 			.TotalConfigurationSize = sizeof(USB_Descriptor_Configuration_t),
-			.TotalInterfaces        = 1,
+			.TotalInterfaces        = 2,
 
 			.ConfigurationNumber    = 1,
 			.ConfigurationStrIndex  = NO_DESCRIPTOR,
@@ -87,20 +87,71 @@ const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor 
 			.MaxPowerConsumption    = USB_CONFIG_POWER_MA(500)
 		},
 
-	.RelayBoardInterface =
+	.ButtonInterface =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
 
-			.InterfaceNumber        = INTERFACE_ID_RelayBoard,
+			.InterfaceNumber        = INTERFACE_ID_BUTTON,
 			.AlternateSetting       = 0,
 
-			.TotalEndpoints         = 0,
+			.TotalEndpoints         = 2,
 
 			.Class                  = USB_CSCP_VendorSpecificClass,
 			.SubClass               = 0x00,
 			.Protocol               = 0x00,
 
 			.InterfaceStrIndex      = NO_DESCRIPTOR
+		},
+		.PAD_ReportINEndpoint1 =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = PAD_IN_EPADDR,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = PAD_EPSIZE,
+			.PollingIntervalMS      = 0x05
+		},
+		.PAD_ReportINEndpoint2 =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = PAD_IN_EPADDR,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = PAD_EPSIZE,
+			.PollingIntervalMS      = 0x05
+		},
+		.LEDInterface =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
+
+			.InterfaceNumber        = INTERFACE_ID_LED,
+			.AlternateSetting       = 0,
+
+			.TotalEndpoints         = 2,
+
+			.Class                  = USB_CSCP_VendorSpecificClass,
+			.SubClass               = 0x00,
+			.Protocol               = 0x00,
+
+			.InterfaceStrIndex      = NO_DESCRIPTOR
+		},
+		.PAD_ReportOUTEndpoint1 =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = PAD_OUT_EPADDR,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = PAD_EPSIZE,
+			.PollingIntervalMS      = 0x05
+		},
+		.PAD_ReportOUTEndpoint2 =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = PAD_OUT_EPADDR,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = PAD_EPSIZE,
+			.PollingIntervalMS      = 0x05
 		},
 };
 
