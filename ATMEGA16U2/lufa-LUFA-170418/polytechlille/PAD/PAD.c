@@ -35,8 +35,14 @@
  *  the project and is responsible for the initial application hardware configuration.
  */
 
-#include "RelayBoard.h"
+#include "PAD.h"
 
+
+#define MASQUE_JOYSTICK 0x01
+#define MASQUE_HAUT 0x04
+#define MASQUE_BAS 0x08
+#define MASQUE_GAUCHE 0x10
+#define MASQUE_DROITE 0x02
 
 
 uint8_t data_send;
@@ -48,62 +54,199 @@ ISR(USART1_RX_vect)
 	state_send = 1;
 }
 
+/*
 
-/** Main program entry point. This routine contains the overall program flow, including initial
- *  setup of all components and the main program loop.
- */
+*/
+
+
 int main(void)
 {
 	SetupHardware();
 	
 	GlobalInterruptEnable();
 
-	for (;;)
-	  USB_USBTask();
-	  task_button_led();
+	for (;;) {
+		USB_USBTask(); 
+		task_button_led();
+	}
 }
+
+/*
+Fonction qui recoit de la machine l'octet envoyé en série permettant d'allumer les LEDS
+*/
 void ReceiveNextReport(void)
 {	
-	Endpoint_SelectEndpoint(PAD_OUT_EPADDR1);
+	/*
+	Endpoint LED 0
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LED0);
 	if(Endpoint_IsOUTReceived())
 	{
 		if(Endpoint_IsReadWriteAllowed())
 		{
-			uint8_t value Endpoint_Read_8();
-			Serial_SendByte(value & LED13_MASK);
-			Endpoint_ClearIN();
-		}
-		Endpoint_SelectEndpoint(PAD_OUT_EPADDR2);
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			uint8_t value Endpoint_Read_8();
-			Serial_SendByte(value & OTHER_LEDS_MASK);
-			Endpoint_ClearIN();
+			char value = Endpoint_Read_8();
+			if (value == 'A' || value == 'a')
+			{
+				Serial_SendByte(value);
+				Endpoint_ClearIN();
+			}
 		}
 	}
+
+	/*
+	Endpoint LED 1
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LED1);
+	if(Endpoint_IsOUTReceived())
+	{
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			char value = Endpoint_Read_8();
+			if (value == 'B' || value == 'b')
+			{
+				Serial_SendByte(value);
+				Endpoint_ClearIN();
+			}
+		}
+	}
+
+	/*
+	Endpoint LED 2
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LED2);
+	if(Endpoint_IsOUTReceived())
+	{
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			char value = Endpoint_Read_8();
+			if (value == 'C' || value == 'c')
+			{
+				Serial_SendByte(value);
+				Endpoint_ClearIN();
+			}
+		}
+	}
+
+	/*
+	Endpoint LED 3
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LED);
+	if(Endpoint_IsOUTReceived())
+	{
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			char value = Endpoint_Read_8();
+			if (value == 'D' || value == 'd')
+			{
+				Serial_SendByte(value);
+				Endpoint_ClearIN();
+			}
+		}
+	}
+
+	/*
+	Endpoint LED 4
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LED4);
+	if(Endpoint_IsOUTReceived())
+	{
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			char value = Endpoint_Read_8();
+			if (value == 'E' || value == 'e')
+			{
+				Serial_SendByte(value);
+				Endpoint_ClearIN();
+			}
+		}
+	}
+
+	/*
+	Endpoint LED 5
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LED5);
+	if(Endpoint_IsOUTReceived())
+	{
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			char value = Endpoint_Read_8();
+			if (value == 'E' || value == 'e')
+			{
+				Serial_SendByte(value);
+				Endpoint_ClearIN();
+			}
+		}
+	}
+
 }
 
-/** Sends the next HID report to the host, via the keyboard data endpoint. */
+/** Gère l'envoie à la machine hôte, ici l'état des boutons */
 void SendNextReport(void)
 {
+	/*
+	0 0 1 1 1 1 1 0
+	*/
 	if(state_send) // Si on a quelque chose à envoyer
 	{
-		// Pour le premier endoint = Boutons 3 à 6
-		Endpoint_SelectEndpoint(PAD_IN_EPADDR1);
+		/*
+		Cas du Joystick
+		*/
+		Endpoint_SelectEndpoint(PAD_IN_JOYSTICK)
 		if(Endpoint_IsReadWriteAllowed())
 		{
-			data_send = data_send & BUTTONS_MASK; // On passe la variable data_send sur un mask pour selectionner les boutons de 3 à 6 et pas le joystick
+			/*
+			On prend le complément de data_send afin d'avoir la touche appuyé en 1 et non en 0, et on applique le masque
+			*/
+			data_send = ~data_send & MASQUE_JOYSTICK;
 			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
 			Endpoint_ClearIN();
 		}
-		// Pour le premier endoint = Boutons 2 (joystick)
-		Endpoint_SelectEndpoint(PAD_IN_EPADDR2);
+
+		/*
+		Cas du bouton HAUT
+		*/
+		Endpoint_SelectEndpoint(PAD_IN_HAUT)
 		if(Endpoint_IsReadWriteAllowed())
 		{
-			data_send = data_send & JOYSTICK_MASK;
+			data_send = ~data_send & MASQUE_HAUT;
 			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
 			Endpoint_ClearIN();
 		}
+
+		/*
+		Cas du bouton BAS
+		*/
+		Endpoint_SelectEndpoint(PAD_IN_BAS)
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			data_send = ~data_send & MASQUE_BAS; 
+			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
+			Endpoint_ClearIN();
+		}
+
+		/*
+		Cas du bouton GAUCHE
+		*/
+		Endpoint_SelectEndpoint(PAD_IN_GAUCHE)
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			data_send = ~data_send & MASQUE_GAUCHE; 
+			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
+			Endpoint_ClearIN();
+		}
+
+		/*
+		Cas du bouton DROIT
+		*/
+		Endpoint_SelectEndpoint(PAD_IN_DROIT)
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			data_send = ~data_send & MASQUE_DROIT;
+			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
+			Endpoint_ClearIN();
+		}
+
+
 	}
 
 	state_send = 0;
@@ -111,21 +254,20 @@ void SendNextReport(void)
 }
 
 void task_button_led(){
-	/* Device must be connected and configured for the task to run */
+	/* Le device doit être connecté et configuré */
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
 
-	/* Send the next keypress report to the host */
+	/* Envoie le report des boutons à la machine hôte */
 	SendNextReport();
 
-	/* Process the LED report sent from the host */
+	/* Procède au traitement des LEDS */
 	ReceiveNextReport();
 }
 
 
-}
 
-/** Configures the board hardware and chip peripherals for the project's functionality. */
+/** Initialise les registres du microcontrolleur afin de permettre les interruptions séries */
 void SetupHardware(void)
 {
 	Serial_Init(BAUDRATE, DOUBLESPEED);

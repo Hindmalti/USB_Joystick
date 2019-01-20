@@ -53,12 +53,19 @@
 
 			// BUTTON Interface
 			USB_Descriptor_Interface_t            BUTTON_Interface;
-			USB_Descriptor_Endpoint_t             PAD_ReportINEndpoint1;
-			USB_Descriptor_Endpoint_t             PAD_ReportINEndpoint2;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_HAUT;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_BAS;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_GAUCHE;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_DROITE;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_JOYSTICK;
 
 			USB_Descriptor_Interface_t            LED_Interface;
-			USB_Descriptor_Endpoint_t             PAD_ReportOUTndpoint1;
-			USB_Descriptor_Endpoint_t             PAD_ReportOUTEndpoint2;
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LED0
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LED1
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LED2
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LED3
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LED4
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LED5
 		} USB_Descriptor_Configuration_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
@@ -86,15 +93,23 @@
 
 	/* Macros: */
 		/** Endpoint address of the PAD HID reporting IN endpoint. */
-		#define PAD_IN_EPADDR1        (ENDPOINT_DIR_IN  | 1)
-		#define PAD_IN_EPADDR2        (ENDPOINT_DIR_IN  | 2)
+		#define PAD_OUT_LED0		 (ENDPOINT_DIR_OUT | 1)
+		#define PAD_OUT_LED1		 (ENDPOINT_DIR_OUT | 2)
+		#define PAD_OUT_LED2         (ENDPOINT_DIR_OUT | 3)
+		#define PAD_OUT_LED3         (ENDPOINT_DIR_OUT | 4)
+		#define PAD_OUT_LED4         (ENDPOINT_DIR_OUT | 5)
+		#define PAD_OUT_LED5         (ENDPOINT_DIR_OUT | 6)
 
 		/** Endpoint address of the PAD HID reporting OUT endpoint. */
-		#define PAD_OUT_EPADDR1       (ENDPOINT_DIR_OUT | 3)
-		#define PAD_OUT_EPADDR2       (ENDPOINT_DIR_OUT | 4)
+		#define PAD_IN_HAUT          (ENDPOINT_DIR_OUT | 7)
+		#define PAD_IN_BAS           (ENDPOINT_DIR_OUT | 8)
+		#define PAD_IN_GAUCHE        (ENDPOINT_DIR_OUT | 9)
+		#define PAD_IN_DROITE        (ENDPOINT_DIR_OUT | 10)
+		#define PAD_IN_JOYSTICK      (ENDPOINT_DIR_OUT | 11)
+
 
 		/** Size in bytes of the PAD HID reporting IN and OUT endpoints. */
-		#define PAD_EPSIZE           8
+		#define PAD_EPSIZE           8 
 
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
