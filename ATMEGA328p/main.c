@@ -6,6 +6,39 @@
 
 #define CPU_FREQ        16000000L       // Assume a CPU frequency of 16Mhz
 
+/*
+PD2 = 2 => Joystick PCINT18
+PD3 = 3 => Bouton droite PCINT19
+PD4 = 4 => Bouton haut PCINT20
+PD5 = 5 => Bouton bas PCINT21
+PD6 = 6 => Bouton gauche PCINT22
+
+PB0 = 8 => LED0
+PB1 = 9 => LED1
+PB2 = 10 => LED2
+PB3 = 11 => LED3
+PB4 = 12 => LED4
+PB5 = 13 => LED5
+
+*/
+
+#define LED0 0
+#define LED1 1 
+#define LED2 2
+#define LED3 3
+#define LED4 4
+#define LED5 5
+
+#define JOYSTICK 2
+#define HAUT 4
+#define GAUCHE 6
+#define BAS 5
+#define DROITE 3 
+
+#define MASQUE_BOUTONS 0x7A
+
+uint8_t octet = 0;
+
 void init_serial(int speed)
 {
 	/* Set baud rate */
@@ -28,74 +61,65 @@ void send_serial(unsigned char c)
 	UDR0 = c;
 }
 
-//fonction donnée permettant de récuperer du port série
-unsigned char get_serial(void) 
-{
-	loop_until_bit_is_set(UCSR0A, RXC0);
-	return UDR0;
-}
-
-/* void send_msg(char* message)
-{
-    int i = 0;
-    while(message[i]!='\0'){
-        send_serial(message[i]);
-        _delay_ms(100);
-        i++;
-    }
-}
- */
 
 //Fonction permettant d'initialiser les pins en E/S
 void output_init(void) {
-	DDRB |= 0xff; // The 8 PINS as output
+	DDRB |= ((1 << LED0) | (1 << LED1) | (1 << LED2) | (1 << LED3) | (1 << LED4) | (1 << LED5));
 }
 
 void input_init(void)
 { 
-	DDRD &= 0xFC; // PIN 2, 3, 4, 5, 6 , 7 as input
-	PORTD|= 0xFC; // pull-up activé
+
+	DDRD &= ~((1 << JOYSTICK) | (1 << BAS) | (1 << HAUT) | (1 << DROITE) | (1 << GAUCHE));
+	// Activation de la résistance de pull-up sur les entrées
+	PORTD |= ((1 << JOYSTICK) | (1 << BAS) | (1 << HAUT) | (1 << DROITE) | (1 << GAUCHE));
+
 }
 
 void interrupt_init() 
 {
 	PCICR = 1<<PCIE2;
-	PCMSK2 = (1<<PCINT19) | (1<<PCINT20) | (1<<PCINT21) | (1<<PCINT22);
+	PCMSK2 = (1<<PCINT18) | (1<<PCINT19) | (1<<PCINT20) | (1<<PCINT21) | (1<<PCINT22);
 	sei();
 }
 
-//Fonction  
-void light_led(unsigned char value){
-	PORTB = (value & 0x7F); // On récupère X-------- 
-	PORTD = (value & 0x80); // On récupère -XXXXXXXX
+
+void light_led(unsigned char value)
+{
+	if(value >= 'A' && value <= 'F') 
+	{
+		/*
+		Si on reçoit A, PORTB |= 0b00000001
+		Si on reçoit F, PORTB |= 0b00100000
+		*/
+		PORTB |= (1 << (value - 'A'));
+
+	} 
+	else if (value >= 'a' && value <= 'f')
+	{
+		//PORT B = PORTB AND NOT(VALUE)
+		PORTB &= ~(1<< (value - 'a'));
+		
+	} 
+	
+	send_serial(value);
 }
 
-/* void toggle_led(void) {
-	PORTB ^= 0xff;
-	_delay_ms(100);
-} */
-
-//Interruption qui permet d'envoyer en série la valeur du PIND
+//Interruption qui permet d'envoyer en série la valeur du PIND dès que l'état d'un bouton change
 ISR(PCINT2_vect)
 {
-	//send_serial('a');
-	send_serial(PIND);
-	//toggle_led();	
+	octet = 0x00; 
+	octet = (PIND & MASQUE_BOUTONS) >> 2;
+	octet |= (1 << 5);
+	send_serial(octet);
+	_delay_ms(500);
 }
 
-//Interruption qui en recevant sur le port série allume les leds
+//Interruption qui allume les leds grâce à ce qu'il reçoit en série
 ISR(USART_RX_vect)
 {
-	uint8_t tmp = UDR0;
+	unsigned char tmp = UDR0;
 	light_led(tmp);
-	/* if(tmp == 'a')
-	{
-		light_led(1);
-	}
-	if(tmp == 'b')
-	{
-		light_led(0);
-	} */
 } 
 
 // Dummy main
@@ -106,7 +130,7 @@ int main(void)
 	input_init();
 	interrupt_init();
 	init_serial(9600);
-	while(1){
+	while(1) {
 	}
 	
 	return 0;
