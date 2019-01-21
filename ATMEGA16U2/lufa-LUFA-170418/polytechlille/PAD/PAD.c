@@ -37,14 +37,6 @@
 
 #include "PAD.h"
 
-
-#define MASQUE_JOYSTICK 0x01
-#define MASQUE_HAUT 0x04
-#define MASQUE_BAS 0x08
-#define MASQUE_GAUCHE 0x10
-#define MASQUE_DROITE 0x02
-
-
 uint8_t data_send;
 uint8_t state_send;
 
@@ -77,104 +69,16 @@ Fonction qui recoit de la machine l'octet envoyé en série permettant d'allumer
 void ReceiveNextReport(void)
 {	
 	/*
-	Endpoint LED 0
+	Endpoint LEDS
 	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LED0);
+	Endpoint_SelectEndpoint(PAD_OUT_LEDS);
 	if(Endpoint_IsOUTReceived())
 	{
 		if(Endpoint_IsReadWriteAllowed())
 		{
 			char value = Endpoint_Read_8();
-			if (value == 'A' || value == 'a')
-			{
-				Serial_SendByte(value);
-				Endpoint_ClearIN();
-			}
-		}
-	}
-
-	/*
-	Endpoint LED 1
-	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LED1);
-	if(Endpoint_IsOUTReceived())
-	{
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			char value = Endpoint_Read_8();
-			if (value == 'B' || value == 'b')
-			{
-				Serial_SendByte(value);
-				Endpoint_ClearIN();
-			}
-		}
-	}
-
-	/*
-	Endpoint LED 2
-	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LED2);
-	if(Endpoint_IsOUTReceived())
-	{
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			char value = Endpoint_Read_8();
-			if (value == 'C' || value == 'c')
-			{
-				Serial_SendByte(value);
-				Endpoint_ClearIN();
-			}
-		}
-	}
-
-	/*
-	Endpoint LED 3
-	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LED);
-	if(Endpoint_IsOUTReceived())
-	{
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			char value = Endpoint_Read_8();
-			if (value == 'D' || value == 'd')
-			{
-				Serial_SendByte(value);
-				Endpoint_ClearIN();
-			}
-		}
-	}
-
-	/*
-	Endpoint LED 4
-	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LED4);
-	if(Endpoint_IsOUTReceived())
-	{
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			char value = Endpoint_Read_8();
-			if (value == 'E' || value == 'e')
-			{
-				Serial_SendByte(value);
-				Endpoint_ClearIN();
-			}
-		}
-	}
-
-	/*
-	Endpoint LED 5
-	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LED5);
-	if(Endpoint_IsOUTReceived())
-	{
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			char value = Endpoint_Read_8();
-			if (value == 'E' || value == 'e')
-			{
-				Serial_SendByte(value);
-				Endpoint_ClearIN();
-			}
+			Serial_SendByte(value);
+			Endpoint_ClearIN();
 		}
 	}
 
@@ -191,62 +95,12 @@ void SendNextReport(void)
 		/*
 		Cas du Joystick
 		*/
-		Endpoint_SelectEndpoint(PAD_IN_JOYSTICK)
+		Endpoint_SelectEndpoint(PAD_IN_BOUTONS)
 		if(Endpoint_IsReadWriteAllowed())
 		{
-			/*
-			On prend le complément de data_send afin d'avoir la touche appuyé en 1 et non en 0, et on applique le masque
-			*/
-			data_send = ~data_send & MASQUE_JOYSTICK;
 			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
 			Endpoint_ClearIN();
 		}
-
-		/*
-		Cas du bouton HAUT
-		*/
-		Endpoint_SelectEndpoint(PAD_IN_HAUT)
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			data_send = ~data_send & MASQUE_HAUT;
-			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
-			Endpoint_ClearIN();
-		}
-
-		/*
-		Cas du bouton BAS
-		*/
-		Endpoint_SelectEndpoint(PAD_IN_BAS)
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			data_send = ~data_send & MASQUE_BAS; 
-			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
-			Endpoint_ClearIN();
-		}
-
-		/*
-		Cas du bouton GAUCHE
-		*/
-		Endpoint_SelectEndpoint(PAD_IN_GAUCHE)
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			data_send = ~data_send & MASQUE_GAUCHE; 
-			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
-			Endpoint_ClearIN();
-		}
-
-		/*
-		Cas du bouton DROIT
-		*/
-		Endpoint_SelectEndpoint(PAD_IN_DROIT)
-		if(Endpoint_IsReadWriteAllowed())
-		{
-			data_send = ~data_send & MASQUE_DROIT;
-			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
-			Endpoint_ClearIN();
-		}
-
-
 	}
 
 	state_send = 0;

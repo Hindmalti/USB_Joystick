@@ -102,47 +102,11 @@ const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor 
 
 			.InterfaceStrIndex      = NO_DESCRIPTOR
 		},
-		.PAD_ReportIN_HAUT =
+		.PAD_ReportIN_BOUTONS =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = PAD_IN_HAUT,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportIN_BAS =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_IN_BAS,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportIN_GAUCHE =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_IN_GAUCHE,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportIN_DROITE =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_IN_DROITE,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportIN_JOYSTICK =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_IN_JOYSTICK,
+			.EndpointAddress        = PAD_IN_BOUTONS,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = PAD_EPSIZE,
 			.PollingIntervalMS      = 0x05
@@ -162,56 +126,11 @@ const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor 
 
 			.InterfaceStrIndex      = NO_DESCRIPTOR
 		},
-		.PAD_ReportOUT_LED0 =
+		.PAD_ReportOUT_LEDS =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = PAD_OUT_LED0,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportOUT_LED1 =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_OUT_LED1,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportOUT_LED2 =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_OUT_LED2,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportOUT_LED3 =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_OUT_LED3,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportOUT_LED4 =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_OUT_LED4,
-			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = PAD_EPSIZE,
-			.PollingIntervalMS      = 0x05
-		},
-		.PAD_ReportOUT_LED5 =
-		{
-			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-
-			.EndpointAddress        = PAD_OUT_LED,
+			.EndpointAddress        = PAD_OUT_LEDS,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = PAD_EPSIZE,
 			.PollingIntervalMS      = 0x05
