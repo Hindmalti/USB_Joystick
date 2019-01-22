@@ -89,6 +89,7 @@
 
 	/* Macros: */
 		/** Endpoint address of the PAD HID reporting OUT endpoint. */
+		#define INTERRUPT_EPSIZE 1
 		#define PAD_OUT_LEDS1		 (ENDPOINT_DIR_OUT | 1)
 		#define PAD_OUT_LEDS2		 (ENDPOINT_DIR_OUT | 2)
 
@@ -98,7 +99,7 @@
 
 
 		/** Size in bytes of the PAD HID reporting IN and OUT endpoints. */
-		#define PAD_EPSIZE           8 
+		#define PAD_EPSIZE           1 
 
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,

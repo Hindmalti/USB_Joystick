@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <libusb-1.0/libusb.h>
 
-#define ID_PRODUCT 0x1234
+#define ID_PRODUCT 0xfd11
 #define NUM_CONFIG 0
 
 extern libusb_device_handle * handle;
