@@ -52,11 +52,16 @@
 			USB_Descriptor_Configuration_Header_t Config;
 
 			// BUTTON Interface
-			USB_Descriptor_Interface_t            BUTTON_Interface;
-			USB_Descriptor_Endpoint_t             PAD_ReportIN_BOUTONS;
+			USB_Descriptor_Interface_t            ButtonInterface;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_BOUTONS1;
+			USB_Descriptor_Endpoint_t             PAD_ReportIN_BOUTONS2;
 
-			USB_Descriptor_Interface_t            LED_Interface;
-			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LEDS;
+
+			USB_Descriptor_Interface_t            LEDInterface;
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LEDS1;
+			USB_Descriptor_Endpoint_t             PAD_ReportOUT_LEDS2;
+
+
 		} USB_Descriptor_Configuration_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
@@ -83,11 +88,13 @@
 		};
 
 	/* Macros: */
-		/** Endpoint address of the PAD HID reporting IN endpoint. */
-		#define PAD_OUT_LEDS		 (ENDPOINT_DIR_OUT | 1)
-
 		/** Endpoint address of the PAD HID reporting OUT endpoint. */
-		#define PAD_IN_BOUTONS      (ENDPOINT_DIR_OUT | 2)
+		#define PAD_OUT_LEDS1		 (ENDPOINT_DIR_OUT | 1)
+		#define PAD_OUT_LEDS2		 (ENDPOINT_DIR_OUT | 2)
+
+		/** Endpoint address of the PAD HID reporting IN endpoint. */
+		#define PAD_IN_BOUTONS1      (ENDPOINT_DIR_IN | 3)
+		#define PAD_IN_BOUTONS2		 (ENDPOINT_DIR_IN | 4)
 
 
 		/** Size in bytes of the PAD HID reporting IN and OUT endpoints. */

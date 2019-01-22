@@ -43,7 +43,7 @@
  *  number of device configurations. The descriptor is read out by the USB host when the enumeration
  *  process begins.
  */
-const USB_Descriptor_Device_t PROGMEM RelayBoard_DeviceDescriptor =
+const USB_Descriptor_Device_t PROGMEM PAD_DeviceDescriptor =
 {
 	.Header                 = {.Size = sizeof(USB_Descriptor_Device_t), .Type = DTYPE_Device},
 
@@ -60,7 +60,7 @@ const USB_Descriptor_Device_t PROGMEM RelayBoard_DeviceDescriptor =
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
 	.ProductStrIndex        = STRING_ID_Product,
-	.SerialNumStrIndex      = STRING_ID_Serial,
+	.SerialNumStrIndex      = NO_DESCRIPTOR,
 
 	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
@@ -70,7 +70,7 @@ const USB_Descriptor_Device_t PROGMEM RelayBoard_DeviceDescriptor =
  *  and endpoints. The descriptor is read out by the USB host during the enumeration process when selecting
  *  a configuration so that the host may correctly communicate with the USB device.
  */
-const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor =
+const USB_Descriptor_Configuration_t PROGMEM PAD_ConfigurationDescriptor =
 {
 	.Config =
 		{
@@ -102,11 +102,20 @@ const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor 
 
 			.InterfaceStrIndex      = NO_DESCRIPTOR
 		},
-		.PAD_ReportIN_BOUTONS =
+		.PAD_ReportIN_BOUTONS1 =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = PAD_IN_BOUTONS,
+			.EndpointAddress        = PAD_IN_BOUTONS1,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = PAD_EPSIZE,
+			.PollingIntervalMS      = 0x05
+		},
+		.PAD_ReportIN_BOUTONS2 =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = PAD_IN_BOUTONS2,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = PAD_EPSIZE,
 			.PollingIntervalMS      = 0x05
@@ -126,11 +135,20 @@ const USB_Descriptor_Configuration_t PROGMEM RelayBoard_ConfigurationDescriptor 
 
 			.InterfaceStrIndex      = NO_DESCRIPTOR
 		},
-		.PAD_ReportOUT_LEDS =
+		.PAD_ReportOUT_LEDS1 =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = PAD_OUT_LEDS,
+			.EndpointAddress        = PAD_OUT_LEDS1,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = PAD_EPSIZE,
+			.PollingIntervalMS      = 0x05
+		},
+		.PAD_ReportOUT_LEDS2 =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = PAD_OUT_LEDS2,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = PAD_EPSIZE,
 			.PollingIntervalMS      = 0x05
@@ -206,10 +224,6 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 					Address = &PAD_ProductString;
 					Size    = pgm_read_byte(&PAD_ProductString.Header.Size);
 					break;
-				case STRING_ID_Serial:
-					Address = &PAD_SerialString;
-					Size    = pgm_read_byte(&PAD_SerialString.Header.Size);
-					break;
 			}
 
 			break;
@@ -218,4 +232,3 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	*DescriptorAddress = Address;
 	return Size;
 }
-

@@ -36,6 +36,10 @@
  */
 
 #include "PAD.h"
+#include <LUFA/Drivers/Peripheral/Serial.h>
+
+#define USART_BAUDRATE 9600
+#define USART_DOUBLE_SPEED 0
 
 uint8_t data_send;
 uint8_t state_send;
@@ -69,15 +73,29 @@ Fonction qui recoit de la machine l'octet envoyé en série permettant d'allumer
 void ReceiveNextReport(void)
 {	
 	/*
-	Endpoint LEDS
+	Endpoint1 pour la LED13
 	*/
-	Endpoint_SelectEndpoint(PAD_OUT_LEDS);
+	Endpoint_SelectEndpoint(PAD_OUT_LEDS1);
 	if(Endpoint_IsOUTReceived())
 	{
 		if(Endpoint_IsReadWriteAllowed())
 		{
 			char value = Endpoint_Read_8();
-			Serial_SendByte(value);
+			Serial_SendByte(value & LED13_MASK);
+			Endpoint_ClearIN();
+		}
+	}
+
+	/*
+	Endpoint2 pour les autres LEDS
+	*/
+	Endpoint_SelectEndpoint(PAD_OUT_LEDS2);
+	if(Endpoint_IsOUTReceived())
+	{
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			char value = Endpoint_Read_8();
+			Serial_SendByte(value & OTHER_LEDS_MASK);
 			Endpoint_ClearIN();
 		}
 	}
@@ -87,20 +105,35 @@ void ReceiveNextReport(void)
 /** Gère l'envoie à la machine hôte, ici l'état des boutons */
 void SendNextReport(void)
 {
-	/*
-	0 0 1 1 1 1 1 0
-	*/
 	if(state_send) // Si on a quelque chose à envoyer
 	{
 		/*
-		Cas du Joystick
+		Pour le premier endpoint = boutons 3 4 5 6
 		*/
-		Endpoint_SelectEndpoint(PAD_IN_BOUTONS)
+		Endpoint_SelectEndpoint(PAD_IN_BOUTONS1);
 		if(Endpoint_IsReadWriteAllowed())
 		{
-			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL)
+			/*
+				On passe la variable data_send sur un mask 
+				pour selectionner les boutons de 3 à 6 et pas le joystick
+			*/
+			data_send = data_send & BUTTONS_MASK; 
+			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL);
 			Endpoint_ClearIN();
 		}
+
+		/*
+		Pour le second endpoint = bouton joystick 2
+		*/
+		Endpoint_SelectEndpoint(PAD_IN_BOUTONS2);
+		if(Endpoint_IsReadWriteAllowed())
+		{
+			data_send = data_send & JOYSTICK_MASK;
+			Endpoint_Write_Stream_LE(&data_send, sizeof(uint8_t), NULL);
+			Endpoint_ClearIN();
+		}
+
+
 	}
 
 	state_send = 0;
